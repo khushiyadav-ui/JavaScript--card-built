@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>20 Dynamic Product Cards - JavaScript</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:Arial,sans-serif; background:#f3f4f6; }
+ul { background:#010101; color:#eee; display:flex; font-size:15px; list-style:none;
+     padding:10px; justify-content:space-around; align-items:center; gap:15px; flex-wrap:wrap; }
+input,.btn-1 { padding:10px; border:none; }
+.btn-1 { background:greenyellow; cursor:pointer; }
+.btn-1:hover { background:red; color:white; }
+.container { display:flex; flex-wrap:wrap; justify-content:center; padding:20px; }
+.card { width:270px; min-height:345px; background:white; border:2px solid #aaa;
+         line-height:25px; border-radius:10px; text-align:center; overflow:hidden;
+         margin:12px; transition:.3s; box-shadow:3px 10px 20px #999; }
+.card:hover { cursor:pointer; transform:translateY(-6px); box-shadow:3px 10px 25px #555; }
+.card img { width:100%; height:165px; display:block; object-fit:cover; background:#ddd; }
+.details { padding-top:8px; }
+.heading { font-size:18px; font-weight:700; }
+.card-btn { width:100%; padding:10px; margin-top:10px; background:#00c8ff;
+             color:#252323; border:none; cursor:pointer; font-weight:600; }
+.card-btn:hover { background:#0096c8; color:white; }
+</style>
+</head>
+<body>
+
+<ul>
+<li>HOME</li><li>ABOUT</li><li>SERVICES</li><li>CONTACT US</li><li>REGISTER</li><li>LOGIN</li>
+<div>
+<input type="text" id="searchBox" placeholder="Search here..." onkeyup="searchProducts()">
+<button class="btn-1" onclick="searchProducts()">SEARCH</button>
+</div>
+</ul>
+
+<div class="container" id="productContainer"></div>
+
+<script>
+const products = [{"brand": "Nike", "price": "\u20b95,999", "product": "Air Max Runner", "rating": "9.2", "image": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80"}, {"brand": "Adidas", "price": "\u20b94,999", "product": "Ultraboost Sport", "rating": "8.9", "image": "https://images.unsplash.com/photo-1552346154-21d32810aba3?w=800&q=80"}, {"brand": "Puma", "price": "\u20b93,999", "product": "Street Runner", "rating": "8.7", "image": "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=800&q=80"}, {"brand": "Reebok", "price": "\u20b94,499", "product": "Classic Trainer", "rating": "8.8", "image": "https://images.unsplash.com/photo-1520256862855-398228c41684?w=800&q=80"}, {"brand": "Skechers", "price": "\u20b95,299", "product": "Go Walk Comfort", "rating": "9.0", "image": "https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=800&q=80"}, {"brand": "New Balance", "price": "\u20b96,499", "product": "Fresh Foam", "rating": "9.1", "image": "https://images.unsplash.com/photo-1554130840-5b9c8e4a5b7d?w=800&q=80"}, {"brand": "Converse", "price": "\u20b93,499", "product": "Chuck Taylor", "rating": "8.6", "image": "https://images.unsplash.com/photo-1607522370275-f14206abe5d3?w=800&q=80"}, {"brand": "Vans", "price": "\u20b93,799", "product": "Old Skool", "rating": "8.8", "image": "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=800&q=80"}, {"brand": "ASICS", "price": "\u20b95,799", "product": "Gel-Kayano", "rating": "9.3", "image": "https://images.unsplash.com/photo-1539185441755-769473a23570?w=800&q=80"}, {"brand": "Fila", "price": "\u20b93,299", "product": "Disruptor", "rating": "8.5", "image": "https://images.unsplash.com/photo-1562183241-b937e95585b6?w=800&q=80"}, {"brand": "Under Armour", "price": "\u20b94,799", "product": "HOVR Phantom", "rating": "8.9", "image": "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=800&q=80"}, {"brand": "Woodland", "price": "\u20b94,299", "product": "Outdoor Trekker", "rating": "8.7", "image": "https://images.unsplash.com/photo-1520639888713-7851133b1ed0?w=800&q=80"}, {"brand": "Red Tape", "price": "\u20b92,999", "product": "Casual Sneaker", "rating": "8.4", "image": "https://images.unsplash.com/photo-1495555961986-6d4c1ecb7be3?w=800&q=80"}, {"brand": "Campus", "price": "\u20b91,999", "product": "Daily Comfort", "rating": "8.3", "image": "https://images.unsplash.com/photo-1512374382149-233c42b6a83b?w=800&q=80"}, {"brand": "Sparx", "price": "\u20b91,799", "product": "Running Pro", "rating": "8.2", "image": "https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=800&q=80"}, {"brand": "Bata", "price": "\u20b92,499", "product": "Urban Walk", "rating": "8.5", "image": "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=800&q=80"}, {"brand": "Crocs", "price": "\u20b93,999", "product": "Classic Clog", "rating": "8.8", "image": "https://images.unsplash.com/photo-1603487742131-4160ec999306?w=800&q=80"}, {"brand": "Jordan", "price": "\u20b97,999", "product": "Air Jordan High", "rating": "9.4", "image": "https://images.unsplash.com/photo-1552346154-21d32810aba3?w=800&q=80"}, {"brand": "Timberland", "price": "\u20b98,499", "product": "Premium Boot", "rating": "9.1", "image": "https://images.unsplash.com/photo-1520639888713-7851133b1ed0?w=800&q=80"}, {"brand": "Hush Puppies", "price": "\u20b95,499", "product": "Comfort Leather", "rating": "8.9", "image": "https://images.unsplash.com/photo-1449247709967-d4461a6d6103?w=800&q=80"}];
+
+const fallbackColors = ["#111827", "#dc2626", "#059669", "#7c3aed", "#ea580c", "#2563eb", "#be123c", "#475569", "#0891b2", "#9333ea", "#0f766e", "#92400e", "#b45309", "#0369a1", "#be185d", "#4338ca", "#0d9488", "#991b1b", "#78350f", "#334155"];
+
+function makeFallbackImage(brand, product, color) {
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="430">
+        <rect width="800" height="430" fill="${color}"/>
+        <circle cx="690" cy="80" r="120" fill="white" opacity=".12"/>
+        <text x="40" y="70" font-family="Arial" font-size="34" font-weight="bold" fill="white">${brand}</text>
+        <text x="40" y="105" font-family="Arial" font-size="20" fill="white">${product}</text>
+        <text x="400" y="285" text-anchor="middle" font-size="140">👟</text>
+        <text x="40" y="380" font-family="Arial" font-size="20" font-weight="bold" fill="white">PRODUCT CARD</text>
+    </svg>`;
+    return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
+}
+
+function displayProducts(list) {
+    const container = document.getElementById("productContainer");
+    container.innerHTML = "";
+
+    list.forEach((product) => {
+        const originalIndex = products.indexOf(product);
+        const card = document.createElement("div");
+        card.className = "card";
+
+        const image = document.createElement("img");
+        image.src = product.image;
+        image.alt = product.brand + " " + product.product;
+
+        // If an internet image fails, show a working local SVG fallback.
+        image.onerror = function() {
+            this.onerror = null;
+            this.src = makeFallbackImage(product.brand, product.product, fallbackColors[originalIndex]);
+        };
+
+        const details = document.createElement("div");
+        details.className = "details";
+        details.innerHTML = `
+            <span class="heading">Brand:</span> ${product.brand}<br>
+            <span class="heading">Product:</span> ${product.product}<br>
+            <span class="heading">Price:</span> ${product.price}<br>
+            <span class="heading">Rating:</span> ${product.rating}<br>
+            <button class="card-btn" onclick="addToCart(${originalIndex})">ADD TO CART</button>
+        `;
+
+        card.appendChild(image);
+        card.appendChild(details);
+        container.appendChild(card);
+    });
+}
+
+function addToCart(index) {
+    alert(products[index].brand + " " + products[index].product + " added to cart!");
+}
+
+function searchProducts() {
+    const value = document.getElementById("searchBox").value.toLowerCase().trim();
+    const filtered = products.filter(product =>
+        product.brand.toLowerCase().includes(value) ||
+        product.product.toLowerCase().includes(value)
+    );
+    displayProducts(filtered);
+}
+
+displayProducts(products);
+</script>
+</body>
+</html>
